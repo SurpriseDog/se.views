@@ -13,9 +13,10 @@ def get_views(site, question, days=7):
     dates = []
     weekly_views = []
     delta = datetime.timedelta(days=days-0.5)
+    first_record = False
 
     with open(sys.argv[1], 'r') as f:
-        for record, line in enumerate(f.readlines()):
+        for line in f.readlines():
             line = json.loads(line)
             date = datetime.datetime.fromtimestamp(line[0])
             if site in line[1] and question in line[1][site]:
@@ -23,7 +24,8 @@ def get_views(site, question, days=7):
 
                 # Print out data for LibreOffice Calc viewing
                 print(date, views)
-                if not record:
+                if not first_record:
+                    first_record = True
                     start_views = views
                     start_date = date
 
@@ -42,7 +44,7 @@ def main():
 
     x, y = get_views(site, question)
     if not x or not y:
-        print("No data found.")
+        print("Insufficient data found to make graph.")
         return
 
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m-%d'))
