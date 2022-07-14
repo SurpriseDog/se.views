@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
 def get_views(site, question, days=7):
-    "Bin views into weekly increments"
+    "Bin views into weekly increments."
     dates = []
     weekly_views = []
     delta = datetime.timedelta(days=days-0.5)
@@ -32,9 +32,6 @@ def get_views(site, question, days=7):
                     weekly_views.append(views - start_views)
                     start_views = views
                     start_date = date
-
-    if len(weekly_views) < 10:
-        print((date - start_date).days, 'days ungraphed')
     return dates, weekly_views
 
 
@@ -44,6 +41,10 @@ def main():
     question = url.split('/')[4]
 
     x, y = get_views(site, question)
+    if not x or not y:
+        print("No data found.")
+        return
+
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m-%d'))
     plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=len(x)))
     plt.locator_params(axis='y', nbins=10)

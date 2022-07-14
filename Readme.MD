@@ -6,25 +6,23 @@ I wrote a simple python script which I run every day to keep track of the views 
 It uses the StackAPI which you can install with: `pip3 install StackAPI`
 
 
-To run it, you need the `site_name` from the url and you `user_id` there.
-
-For example on the Arquade Stack Exchange the url is actually called `gaming.stackexchange`
-
-The best way to find this info is to click your user page (for that site)
-
-For example I would click: https://gaming.stackexchange.com/users/234411/surprisedog
-
-And I would copy paste the values to run the script like this:
+To run it you just need to copy paste you userpage url from each website. For example, to get all of my questions and answes on Arquade stackexchange, I would type:
 
 ````
-./se.views.py gaming 234411
+./se.views.py https://gaming.stackexchange.com/users/234411/surprisedog
+````
+
+or alternatively you can just specify `site_name.user_id`
+
+````
+./se.views.py gaming.234411
 
 ````
 
 You can also run it on multiple sites at once like this:
 
 ````
-./se.views.py askubuntu 951756 superuser 1023751 worldbuilding 63172
+./se.views.py askubuntu.951756 superuser.1023751 worldbuilding.63172
 
 ````
 
