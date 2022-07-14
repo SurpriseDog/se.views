@@ -31,7 +31,14 @@ def fetch_views(site, questions):
     "Given a site name and list of questions, fetch the view count"
     api = StackAPI(site)
     result = api.fetch('questions/{ids}', ids=questions)
-    return {item['question_id']:item['view_count'] for item in result['items']}
+    items = result.pop('items')
+    if result['backoff']:
+        print("Warning: Backoff triggered")
+        print(result)
+    if result['quota_remaining'] <= 64:
+        print("Low quota:", result['quota_remaining'])
+        print(result)
+    return {item['question_id']:item['view_count'] for item in items}
 
 
 def main():
@@ -44,12 +51,13 @@ def main():
         if '/questions/' in url:
             data[site].add(number)
         else:
+            print("Querying", site, 'for user:', number)
             questions = query_user(site, number)
+            time.sleep(1)
             data[site].update(questions)
 
     # Process accumulated questions
     out = {}
-    print(data)
     for site, questions in data.items():
         if questions:
             print("Querying", site, 'for question ids:', ', '.join(questions))
