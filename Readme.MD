@@ -1,4 +1,4 @@
-I wrote a simple python script which I run everyday to keep track of the views thread where I contributed a Question or Answer and make neat graphs show views per week.
+I wrote a simple python script which I run every day to keep track of the views across all of my Questions and Answes on the StackExchange Network.
 
 ![Example image](example.png)
 
@@ -6,9 +6,15 @@ I wrote a simple python script which I run everyday to keep track of the views t
 It uses the StackAPI which you can install with: `pip3 install StackAPI`
 
 
-To run it, you need the `site_name` from the url and you `user_id` there. For example Arquade Stack Exchange is actually called gaming.stackexchange in the url. The best way is to click your user page there to get both. For example I would click: https://gaming.stackexchange.com/users/234411/surprisedog
+To run it, you need the `site_name` from the url and you `user_id` there.
 
-and I would run the script like this:
+For example on the Arquade Stack Exchange the url is actually called gaming.stackexchange
+
+The best way to find this info is to click your user page (for that site)
+
+For example I would click: https://gaming.stackexchange.com/users/234411/surprisedog
+
+and I would copy paste the values to run the script like this:
 
 ````
 ./se.views.py gaming 234411
@@ -24,7 +30,7 @@ You can also run it on multiple sites at once like this:
 
 ----
 
-##Graphing
+## Graphing
 
 After you have built up several weeks of data on StackExchange views, you can graph it by running:
 
