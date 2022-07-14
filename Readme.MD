@@ -8,13 +8,13 @@ It uses the StackAPI which you can install with: `pip3 install StackAPI`
 
 To run it, you need the `site_name` from the url and you `user_id` there.
 
-For example on the Arquade Stack Exchange the url is actually called gaming.stackexchange
+For example on the Arquade Stack Exchange the url is actually called `gaming.stackexchange`
 
 The best way to find this info is to click your user page (for that site)
 
 For example I would click: https://gaming.stackexchange.com/users/234411/surprisedog
 
-and I would copy paste the values to run the script like this:
+And I would copy paste the values to run the script like this:
 
 ````
 ./se.views.py gaming 234411
@@ -27,6 +27,8 @@ You can also run it on multiple sites at once like this:
 ./se.views.py askubuntu 951756 superuser 1023751 worldbuilding 63172
 
 ````
+
+Set it up as cron script to run everyday or if you are running this from a laptop you can use [LazyCron](https://github.com/SurpriseDog/LazyCron) to make sure it runs everyday even if the laptop isn't always on at the same time of day.
 
 ----
 
