@@ -4,7 +4,7 @@
 
 import sys
 import json
-from datetime import datetime
+import datetime
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
@@ -12,24 +12,29 @@ def get_views(site, question, days=7):
     "Bin views into weekly increments"
     dates = []
     weekly_views = []
+    delta = datetime.timedelta(days=days-0.5)
 
     with open(sys.argv[1], 'r') as f:
         for record, line in enumerate(f.readlines()):
             line = json.loads(line)
-            date = line[0]
+            date = datetime.datetime.fromtimestamp(line[0])
             if site in line[1] and question in line[1][site]:
                 views = int(line[1][site][question])
+
+                # Print out data for LibreOffice Calc viewing
+                print(date, views)
                 if not record:
                     start_views = views
                     start_date = date
-                if date - start_date >= 86400 * (days - 0.5):
-                    dates.append(datetime.fromtimestamp((date)))
+
+                if date - start_date >= delta:
+                    dates.append(date)
                     weekly_views.append(views - start_views)
                     start_views = views
                     start_date = date
 
     if len(weekly_views) < 10:
-        print((date - start_date) // 86400, 'days ungraphed')
+        print((date - start_date).days, 'days ungraphed')
     return dates, weekly_views
 
 
@@ -39,7 +44,6 @@ def main():
     question = url.split('/')[4]
 
     x, y = get_views(site, question)
-    print(*list(zip(x, y)), sep='\n')
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m-%d'))
     plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=len(x)))
     plt.locator_params(axis='y', nbins=10)

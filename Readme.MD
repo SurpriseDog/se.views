@@ -44,3 +44,5 @@ For example to get the number of views on my popular Lifehacks question I would 
 ```
 ./se.plot.py se.views.out https://lifehacks.stackexchange.com/questions/22791/how-can-i
 ```
+
+Weekly view data is printed to the terminal if you want to make your own fun graphs in LibreOffice Calc
