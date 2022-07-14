@@ -36,7 +36,7 @@ Set it up as cron script to run everyday or if you are running this from a lapto
 
 After you have built up several weeks of data on StackExchange views, you can graph it by running:
 
-./se.plot.py se.views.out <url>
+./se.plot.py se.views.out question_url
 
 
 For example to get the number of views on my popular Lifehacks question I would run:
