@@ -80,8 +80,8 @@ def format_axis(ax, dates, views):
 
 
     # Set the y tics
-    start = int(views[0])
-    end = views[-1]
+    start = int(min(views))
+    end = max(views)
     end = int(end + 1) if end % 1 else int(end)
     scale = math.log(end - start, 10) if end - start > 1 else 1
     major = int(10 ** int(scale - 1))
