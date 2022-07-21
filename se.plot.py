@@ -8,7 +8,7 @@ import math
 import datetime
 import matplotlib
 import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
+
 
 def get_views(filename, site, question):
     dates = []
@@ -34,17 +34,16 @@ def print_views(dates, views, left, right):
 
 def bin_weekly(dates, views_list, days=7):
     "Bin views into weekly increments."
-    weekly_dates = []
-    weekly_views = []
     delta = datetime.timedelta(days=days)
     end_date = dates[-1]
     end_views = views_list[-1]
-    weekly_dates.append(end_date)
+    weekly_dates = [end_date]
+    weekly_views = []
 
     # Go thru in reverse order so the the last date is the same in both graphs
     for date, views in zip(reversed(dates), reversed(views_list)):
         if end_date - date >= delta or (date == weekly_dates[0] and end_date - date >= delta * 0.7):
-            weekly_dates.append(date)
+            weekly_dates.append(weekly_dates[-1] - delta)
             increase = end_views - views
             # Adjust the numbers if more or less than a whole week
             adj = (end_date - date) / delta
@@ -60,7 +59,6 @@ def bin_weekly(dates, views_list, days=7):
     return weekly_dates, weekly_views
 
 
-
 def format_axis(ax, dates, views):
     strip = lambda date: datetime.datetime(date.year, date.month, date.day)
 
@@ -74,9 +72,9 @@ def format_axis(ax, dates, views):
         tics = [strip(dates[0]), strip(dates[-1])]
 
     ax.set_xlim([min(tics[0], dates[0]), max(tics[-1], dates[-1])])
-    ax.xaxis.set_major_formatter(mdates.DateFormatter('%m-%d'))
+    ax.xaxis.set_major_formatter(matplotlib.dates.DateFormatter('%m-%d'))
     if length < datetime.timedelta(days=100):
-        ax.xaxis.set_minor_locator(mdates.DayLocator(interval=1))
+        ax.xaxis.set_minor_locator(matplotlib.dates.DayLocator(interval=1))
     ax.set_xticks(tics)
 
 
@@ -118,7 +116,6 @@ def get_tics(start, end):
     # print('\n')
     candidates.sort()
     return candidates[-1][-1]
-
 
 
 def main():

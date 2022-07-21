@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # Track views over time
 
-
+import os
 import sys
 import time
 import json
@@ -46,7 +46,15 @@ def fetch_views(site, questions):
 def main():
     # Process each url looking for site names and question ids
     data = {}
-    for url in sys.argv[1:]:
+    args = sys.argv[1:]
+
+    # Read args from file if passed
+    if len(args) == 1:
+        if os.path.exists(args[0]):
+            with open(args[0]) as f:
+                args = f.read().split()
+
+    for url in args:
         site, number = parse_url(url)
         if site not in data:
             data[site] = set()
