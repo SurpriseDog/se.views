@@ -7,6 +7,8 @@ import time
 import json
 from stackapi import StackAPI
 
+
+
 def query_user(site, user):
     "Get all questions and answers for user:"
     api = StackAPI(site)
@@ -68,6 +70,7 @@ def main():
     with open('se.views.out', 'a') as f:
         json.dump([int(time.time()), out], f)
         f.write('\n')
+
 
 if __name__ == "__main__":
     main()

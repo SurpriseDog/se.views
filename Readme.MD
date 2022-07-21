@@ -60,6 +60,6 @@ Raw view data is printed to the terminal if you want to make your own fun graphs
 
 #### FAQ:
 
-**How do weekly views have a fractional number of views? **
+  **How do weekly views have a fractional number of views?**
 
 If the script didn't run at the same time every day, the numbers are being adjusted. For example if the time between the first to last data point in a week is actually 7.3 days, then the number of views is being divided down by 7.3/7  to normalize the numbers.

@@ -10,7 +10,6 @@ import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
-
 def get_views(filename, site, question):
     dates = []
     views = []
@@ -65,8 +64,9 @@ def bin_weekly(dates, views_list, days=7):
 def format_axis(ax, dates, views):
     strip = lambda date: datetime.datetime(date.year, date.month, date.day)
 
-    if dates[-1] - dates[0] >= datetime.timedelta(days=7):
-        tics = get_tics(0, (dates[-1] - dates[0]).days)
+    length = dates[-1] - dates[0]
+    if length >= datetime.timedelta(days=7):
+        tics = get_tics(0, length.days)
         if len(tics) >= 4 and (tics[1] - tics[0]) / (tics[2] - tics[1]) < 0.5:
             tics = tics[1:]
         tics = [strip(dates[0]) + datetime.timedelta(days=days) for days in tics]
@@ -75,7 +75,8 @@ def format_axis(ax, dates, views):
 
     ax.set_xlim([min(tics[0], dates[0]), max(tics[-1], dates[-1])])
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%m-%d'))
-    ax.xaxis.set_minor_locator(mdates.DayLocator(interval=1))
+    if length < datetime.timedelta(days=100):
+        ax.xaxis.set_minor_locator(mdates.DayLocator(interval=1))
     ax.set_xticks(tics)
 
 
@@ -119,6 +120,7 @@ def get_tics(start, end):
     return candidates[-1][-1]
 
 
+
 def main():
     if len(sys.argv[1:]) >= 2:
         filename = sys.argv[1]
@@ -154,7 +156,7 @@ def main():
     ax1.set_title('Total Views')
     ax1.plot(dates, views)
 
-    fig.suptitle('StackExchange Views on ' + ' '.join((site.title(), "Question", question)))
+    fig.suptitle('Views on ' + ' '.join((site.title(), "Question", question)))
     plt.show()
 
 
