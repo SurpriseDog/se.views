@@ -141,7 +141,7 @@ def main():
     if len(dates) >= 2:
         print("\nAverage Views per day:", end=' ')
         avg = (views[-1] - views[0]) / ((dates[-1] - dates[0]).total_seconds() / 86400)
-        print(round(avg, 1) if avg < 100 else int(round(avg,0)))
+        print(round(avg, 1) if avg < 100 else int(round(avg, 0)))
 
     weekly_dates, weekly_views = bin_weekly(dates, views)
     if len(weekly_dates) >= 3:

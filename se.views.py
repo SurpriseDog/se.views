@@ -5,7 +5,12 @@ import os
 import sys
 import time
 import json
-from stackapi import StackAPI
+
+try:
+    from stackapi import StackAPI
+except ImportError:
+    print("Install stackapi with: pip3 install StackAPI")
+    sys.exit(1)
 
 
 
