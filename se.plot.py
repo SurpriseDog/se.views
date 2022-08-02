@@ -133,11 +133,15 @@ def main():
     question = url.split('/')[4]
 
     dates, views = get_views(filename, site, question)
-    if dates:
-        print_views(dates, views, 'Date:', 'Views Total:')
-    else:
+    if not dates:
         print("Insufficient data found to make graph")
         return
+
+    print_views(dates, views, 'Date:', 'Views Total:')
+    if len(dates) >= 2:
+        print("\nAverage Views per day:", end=' ')
+        avg = (views[-1] - views[0]) / ((dates[-1] - dates[0]).total_seconds() / 86400)
+        print(round(avg, 1) if avg < 100 else int(round(avg,0)))
 
     weekly_dates, weekly_views = bin_weekly(dates, views)
     if len(weekly_dates) >= 3:

@@ -52,7 +52,10 @@ def main():
     if len(args) == 1:
         if os.path.exists(args[0]):
             with open(args[0]) as f:
-                args = f.read().split()
+                args = []
+                for line in f.readlines():
+                    if line and not line.startswith('#'):
+                        args.extend(line.split())
 
     for url in args:
         site, number = parse_url(url)
