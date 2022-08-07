@@ -9,6 +9,8 @@ import datetime
 import matplotlib
 import matplotlib.pyplot as plt
 
+sig = lambda num: ("{0:.3g}").format(num) if abs(num) < 1000 else str(int(num))
+
 
 def get_views(filename, site, question):
     dates = []
@@ -22,15 +24,6 @@ def get_views(filename, site, question):
                 dates.append(date)
                 views.append(count)
     return dates, views
-
-
-def sig(num):
-    # Return number rounded to 1 digit if less than 100
-    if type(num) == int:
-        return num
-    else:
-        return round(num, 1) if num < 100 else int(round(num, 0))
-
 
 def print_views(dates, views, left, right):
     "Print out data for LibreOffice Calc viewing"
@@ -152,10 +145,10 @@ def main():
 
     weekly_dates, weekly_views = bin_weekly(dates, views)
     if len(weekly_dates) >= 3:
-        print_views(weekly_dates, weekly_views, 'Date:', "Weekly Views:")
+        print_views(weekly_dates, weekly_views, 'Date:', "Normalized Weekly Views:")
         fig, (ax1, ax2) = plt.subplots(1, 2)
         format_axis(ax2, weekly_dates, weekly_views)
-        ax2.set_title('Weekly Views')
+        ax2.set_title('Normalized Weekly Views')
         ax2.plot(weekly_dates, weekly_views)
         if len(weekly_dates) >= 2:
             print("\nAverage Views per week:", sig(sum(weekly_views) / len(weekly_views)))
