@@ -24,12 +24,20 @@ def get_views(filename, site, question):
     return dates, views
 
 
+def sig(num):
+    # Return number rounded to 1 digit if less than 100
+    if type(num) == int:
+        return num
+    else:
+        return round(num, 1) if num < 100 else int(round(num, 0))
+
+
 def print_views(dates, views, left, right):
     "Print out data for LibreOffice Calc viewing"
     print('\n')
     print(str(left).ljust(16), '\t', right)
     for date, view in zip(dates, views):
-        print(date, '\t', round(view, 1))
+        print(date, '\t', sig(view))
 
 
 def bin_weekly(dates, views_list, days=7):
@@ -139,9 +147,8 @@ def main():
 
     print_views(dates, views, 'Date:', 'Views Total:')
     if len(dates) >= 2:
-        print("\nAverage Views per day:", end=' ')
-        avg = (views[-1] - views[0]) / ((dates[-1] - dates[0]).total_seconds() / 86400)
-        print(round(avg, 1) if avg < 100 else int(round(avg, 0)))
+        print("\nAverage Views per day:", \
+        sig((views[-1] - views[0]) / ((dates[-1] - dates[0]).total_seconds() / 86400)))
 
     weekly_dates, weekly_views = bin_weekly(dates, views)
     if len(weekly_dates) >= 3:
@@ -150,6 +157,9 @@ def main():
         format_axis(ax2, weekly_dates, weekly_views)
         ax2.set_title('Weekly Views')
         ax2.plot(weekly_dates, weekly_views)
+        if len(weekly_dates) >= 2:
+            print("\nAverage Views per week:", sig(sum(weekly_views) / len(weekly_views)))
+
     else:
         fig, ax1 = plt.subplots()
 
