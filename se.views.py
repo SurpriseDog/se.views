@@ -61,6 +61,8 @@ def main():
                 for line in f.readlines():
                     if line and not line.startswith('#'):
                         args.extend(line.split())
+        else:
+            raise ValueError("Path does not exist:", args[0])
 
     for url in args:
         site, number = parse_url(url)

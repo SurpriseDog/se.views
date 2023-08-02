@@ -6,10 +6,32 @@ import sys
 import json
 import math
 import datetime
+import calendar
 import matplotlib
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 
-sig = lambda num: ("{0:.3g}").format(num) if abs(num) < 1000 else str(int(num))
+
+def sig(num, digits=2):
+    return ("{0:." + str(digits) + "g}").format(num) if abs(num) < 10**digits else str(int(num))
+
+
+def add_date(src, years=0, months=0, days=0):
+    "Add a number of years, months, days to date object"
+
+    # Calculate new years and month
+    new_y, new_m = src.year, src.month
+    new_y += (new_m + months - 1) // 12 + years
+    new_m = (new_m + months - 1) % 12 + 1
+
+    # Replace years and month in date and limit days if month comes up short (like February has 28 days)
+    new_d = min(calendar.monthrange(new_y, new_m)[-1], src.day)
+    date = src.replace(year=new_y, month=new_m, day=new_d)
+
+    # Add and days in
+    if days:
+        date += datetime.timedelta(days=days)
+    return date
 
 
 def get_views(filename, site, question):
@@ -24,6 +46,7 @@ def get_views(filename, site, question):
                 dates.append(date)
                 views.append(count)
     return dates, views
+
 
 def print_views(dates, views, left, right):
     "Print out data for LibreOffice Calc viewing"
@@ -61,23 +84,54 @@ def bin_weekly(dates, views_list, days=7):
 
 
 def format_axis(ax, dates, views):
+
+    # Strip removes and hours, minutes... off dates
     strip = lambda date: datetime.datetime(date.year, date.month, date.day)
 
-    length = dates[-1] - dates[0]
-    if length >= datetime.timedelta(days=7):
-        tics = get_tics(0, length.days)
-        if len(tics) >= 4 and (tics[1] - tics[0]) / (tics[2] - tics[1]) < 0.5:
-            tics = tics[1:]
-        tics = [strip(dates[0]) + datetime.timedelta(days=days) for days in tics]
-    else:
-        tics = [strip(dates[0]), strip(dates[-1])]
+    # Generate major tics every month or year
+    start = strip(dates[0])                 # Start date
+    end = strip(dates[-1])                  # End date
+    length = (dates[-1] - dates[0]).days    # Number of days between them
+    tics = []                               # Set major tics
+    print('length =', length)
 
-    ax.set_xlim([min(tics[0], dates[0]), max(tics[-1], dates[-1])])
-    ax.xaxis.set_major_formatter(matplotlib.dates.DateFormatter('%m-%d'))
-    if length < datetime.timedelta(days=100):
-        ax.xaxis.set_minor_locator(matplotlib.dates.DayLocator(interval=1))
+
+    if length < 90:
+        print('short')
+        ax.xaxis.set_major_formatter(matplotlib.dates.DateFormatter('%m-%d'))
+        tics = [start, end]
+    elif length < 365 * 3:
+        print('medium')
+        # Add major tics every month
+        ax.xaxis.set_major_formatter(matplotlib.dates.DateFormatter('%y-%m'))
+        date = datetime.datetime(start.year, start.month, 1)
+        while date < end:
+            if date > start:
+                tics.append(date)
+            date = add_date(date, months=1)
+    else:
+        print('long')
+        # Add major tics every year
+        ax.xaxis.set_major_formatter(matplotlib.dates.DateFormatter('%y-%m'))
+        date = datetime.datetime(start.year, 1, 1)
+        while date < end:
+            if date > start:
+                tics.append(date)
+            date = add_date(date, years=1)
+
+
     ax.set_xticks(tics)
 
+
+    # Set limits to conform to first and last date
+    ax.set_xlim(start, end)
+
+    # Set minor ticks to days or months
+    if length < 100:
+        ax.xaxis.set_minor_locator(matplotlib.dates.DayLocator(interval=1))
+    else:
+        # Set Minor ticks to months
+        ax.xaxis.set_minor_locator(mdates.MonthLocator(interval=1))
 
     # Set the y tics
     start = int(min(views))
@@ -99,6 +153,7 @@ def format_axis(ax, dates, views):
             minors = 10
         if minors > 1:
             ax.yaxis.set_minor_locator(matplotlib.ticker.AutoMinorLocator(n=minors))
+
 
 
 def get_tics(start, end):
@@ -123,6 +178,7 @@ def main():
     if len(sys.argv[1:]) >= 2:
         filename = sys.argv[1]
         url = sys.argv[2]
+
     elif len(sys.argv[1:]) >= 1:
         filename = 'se.views.out'
         url = sys.argv[1]
@@ -134,7 +190,18 @@ def main():
     question = url.split('/')[4]
 
     dates, views = get_views(filename, site, question)
-    if not dates:
+
+
+    # Truncate view if given max number of days
+    '''
+    truncate = None
+    if truncate:
+        dates = dates[-truncate:]
+        views = views[-truncate:]
+    '''
+
+
+    if len(dates) <= 2:
         print("Insufficient data found to make graph")
         return
 
@@ -148,6 +215,7 @@ def main():
         print_views(weekly_dates, weekly_views, 'Date:', "Normalized Weekly Views:")
         fig, (ax1, ax2) = plt.subplots(1, 2)
         format_axis(ax2, weekly_dates, weekly_views)
+
         ax2.set_title('Normalized Weekly Views')
         ax2.plot(weekly_dates, weekly_views)
         if len(weekly_dates) >= 2:
